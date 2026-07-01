@@ -1,0 +1,70 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #000000, #1a1a1a, #333333, #000000);
+  background-size: 400% 400%;
+  animation: gradient-shift 10s ease infinite;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: rgba(30, 30, 30, 0.8);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  width: 400px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+.candidates {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.candidate {
+  text-align: center;
+}
+
+.response-message {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

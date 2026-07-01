@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vote for Your Candidate</title>
+  <link rel="stylesheet" href="vote.css" />
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Vote for Your Candidate</h1>
+    <p class="response-message" id="walletResponse"></p>
+    
+    <div class="candidates">
+      <div class="candidate">
+        <h2>Candidate 1</h2>
+        <p id="candidate1Votes">Votes: Loading...</p>
+        <button class="vote-button" data-candidate="1">Vote</button>
+      </div>
+      <div class="candidate">
+        <h2>Candidate 2</h2>
+        <p id="candidate2Votes">Votes: Loading...</p>
+        <button class="vote-button" data-candidate="2">Vote</button>
+      </div>
+    </div>
+
+    <p class="response-message" id="voteResponse"></p>
+  </div>
+
+  <script>
+    const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"_candidateId","type":"uint256"}],"name":"votedEvent","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"candidates","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"voteCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"candidatesCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_candidateId","type":"uint256"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}];
+
+    
+    const contractAddress = '0x6412AAf6866598D87781aDf40cbf36aF8A48ecB5';
+
+    const walletResponse = document.getElementById('walletResponse');
+    const voteButtons = document.querySelectorAll('.vote-button');
+    const voteResponse = document.getElementById('voteResponse');
+    const candidate1Votes = document.getElementById('candidate1Votes');
+    const candidate2Votes = document.getElementById('candidate2Votes');
+
+    let walletAddress = '';
+    let contract;
+    let isWalletRegistered = false;
+
+    // Create web3 instance with fallback provider
+    const web3 = new Web3(window.ethereum || new Web3.providers.HttpProvider("YOUR_ALCHEMY_HTTPS_URL"));
+    contract = new web3.eth.Contract(contractABI, contractAddress);
+
+    async function checkWalletRegistration(address) {
+      try {
+        const res = await fetch('http://localhost:3000/api/CheckWallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ walletAddress: address }),
+          credentials: 'include',
+        });
+
+        if (res.ok) {
+          isWalletRegistered = true;
+          voteResponse.textContent = '';
+          voteResponse.style.color = 'green';
+          return true;
+        } else {
+          isWalletRegistered = false;
+          voteResponse.textContent = 'This wallet is not registered. Please register first.';
+          voteResponse.style.color = 'red';
+          return false;
+        }
+      } catch (err) {
+        console.error('Error checking wallet:', err);
+        voteResponse.textContent = 'Error verifying wallet';
+        voteResponse.style.color = 'red';
+        return false;
+      }
+    }
+
+    async function updateVoteCounts() {
+      try {
+        const candidate1 = await contract.methods.candidates(1).call();
+        const candidate2 = await contract.methods.candidates(2).call();
+        candidate1Votes.textContent = `Votes: ${candidate1.voteCount}`;
+        candidate2Votes.textContent = `Votes: ${candidate2.voteCount}`;
+      } catch (err) {
+        console.error("Failed to fetch vote counts", err);
+        candidate1Votes.textContent = "Votes: Error";
+        candidate2Votes.textContent = "Votes: Error";
+      }
+    }
+
+    async function initWeb3() {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          walletAddress = accounts[0];
+          walletResponse.textContent = `Connected: ${walletAddress}`;
+          walletResponse.style.color = 'green';
+          await checkWalletRegistration(walletAddress);
+        } catch (err) {
+          console.error(err);
+          walletResponse.textContent = 'Failed to connect wallet';
+          walletResponse.style.color = 'red';
+        }
+      } else {
+        walletResponse.textContent = 'MetaMask is not installed';
+        walletResponse.style.color = 'red';
+      }
+    }
+
+    voteButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        if (!walletAddress) {
+          voteResponse.textContent = 'Please connect your wallet first';
+          voteResponse.style.color = 'red';
+          return;
+        }
+
+        if (!isWalletRegistered) {
+          voteResponse.textContent = 'This wallet is not registered. Please register first.';
+          voteResponse.style.color = 'red';
+          return;
+        }
+
+        const candidateId = parseInt(button.getAttribute('data-candidate'));
+
+        try {
+          const gas = await contract.methods.vote(candidateId).estimateGas({ from: walletAddress });
+
+          const tx = await contract.methods.vote(candidateId).send({
+            from: walletAddress,
+            gas: gas + 10000,
+          });
+
+          voteResponse.textContent = `Vote successful! Tx Hash: ${tx.transactionHash}`;
+          voteResponse.style.color = 'green';
+
+          await updateVoteCounts(); // Update after voting
+        } catch (error) {
+          console.error(error);
+          voteResponse.textContent = error.message || 'Voting failed';
+          voteResponse.style.color = 'red';
+        }
+      });
+    });
+
+    // On wallet change
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', async function (accounts) {
+        if (accounts.length > 0) {
+          walletAddress = accounts[0];
+          walletResponse.textContent = `Switched to: ${walletAddress}`;
+          walletResponse.style.color = 'orange';
+          await checkWalletRegistration(walletAddress);
+          await updateVoteCounts(); // Update when wallet changes
+        } else {
+          walletAddress = '';
+          isWalletRegistered = false;
+          walletResponse.textContent = 'Wallet disconnected';
+          walletResponse.style.color = 'red';
+        }
+      });
+    }
+
+    // Load on page
+    window.addEventListener('load', async () => {
+      await updateVoteCounts(); // 🔥 always fetch vote counts
+      await initWeb3();         // ✅ try wallet connection
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+@media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      padding: 20px;
+    }
+  
+    nav a {
+      display: block;
+      margin: 10px 0;
+    }
+    .hero{
+        margin-bottom: 10rem !important;
+    }
+    
+  
+    .hero h1 {
+        font-size: 2.5rem !important;
+      font-weight: 300;
+    }
+ 
+    .footer-cols p br{
+        display: none;
+    }
+    .hero p
+    br{
+        display: none;
+    }
+
+
+
+  
+    .hero h2 {
+      font-size: 1.5rem;
+    }
+  
+    .launch-btn {
+      width: 50%;
+      padding: 5px 0;
+    }
+    .footer-cols{
+        display: none;
+    }
+  
+     .footer-cols {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .footer-cols div {
+      margin-bottom: 20px;
+      text-align: center;
+    } 
+  } 
+  .launch-btn:hover{
+    background-color: #18e1d9;
+    color: #000;
+  } 
+
+   
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #000;
+    color: white;
+    overflow-x: hidden;
+     /* background-image: url("bg-2.png");
+
+     background-size: cover; 
+     background-repeat: no-repeat;  */
+  }
+
+  /* 🔹 Animated Grid Background */
+   .animated-grid-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .animated-grid-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(24, 225, 217, 0.1),
+        rgba(24, 225, 217, 0.1) 1px,
+        transparent 1px,
+        transparent 20px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(180, 107, 242, 0.1),
+        rgba(180, 107, 242, 0.1) 1px,
+        transparent 1px,
+        transparent 20px
+      );
+    animation: rotateGrid 30s linear infinite;
+  }
+
+  @keyframes rotateGrid {
+    0% {
+      transform: rotate(0deg) scale(1.2);
+    }
+    100% {
+      transform: rotate(360deg) scale(1.2);
+    }
+  } 
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+  }
+
+  nav a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+    font-weight: 400;
+  }
+
+  .btn-register {
+    background: #18e1d9;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    margin-left: 10px;
+    color: black;
+  }
+
+  .hero {
+    text-align: center;
+    margin-top: 100px;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(to right, violet, cyan);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+    margin-top: 10px;
+  }
+
+  .hero p {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #ccc;
+  }
+
+  .launch-btn {
+    margin-top: 40px;
+    border: 2px solid white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    background: none;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+   
+ 
+  .background-lines {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+  }
+
+  footer {
+    text-align: center;
+    padding: 50px 20px 20px;
+    /* background-color: #000; */
+  }
+
+  .footer-cols {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+
+  .footer-cols div {
+    color: #aaa;
+  }
+
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .social-icons img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo img {
+    height: 80px;
+    width: 80px;
+    /* margin-right: 10px; */
+  }
+
+  .harinat img {
+    height: 20px;
+    width: 20px;
+  }
+  /* .footer-logo figure img{
+    height: 800px;
+    width: 80px;
+  } */

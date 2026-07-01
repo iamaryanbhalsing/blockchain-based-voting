@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="registration.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Registration Form -->
+    <div class="form-container" id="registration-form">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <input type="email" name="email" id="email" placeholder="Enter Your Email" required>
+        <input type="text" name="walletAddress" id="walletAddress" placeholder="Wallet Address" required>
+        <button type="submit" id="registerButton">Submit</button>
+        <p class="response-message" id="registerResponse"></p> <!-- Response message -->
+        <div class="loading hidden" id="registerLoading">Sending OTP...</div> <!-- Loading animation -->
+      </form>
+    </div>
+
+    <!-- OTP Form -->
+    <div class="form-container hidden" id="otp-form">
+      <h2>Enter OTP</h2>
+      <form id="otpForm">
+        <input type="text" name="otp" id="otp" placeholder="OTP" required>
+        <button type="submit">Verify OTP</button>
+        <button type="button" id="resendOtpBtn">Resend OTP</button>
+        <p class="response-message" id="otpResponse"></p> <!-- Response message -->
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const registerForm = document.getElementById('registerForm');
+    const otpForm = document.getElementById('otpForm');
+    const registrationFormContainer = document.getElementById('registration-form');
+    const otpFormContainer = document.getElementById('otp-form');
+    const registerResponse = document.getElementById('registerResponse');
+    const otpResponse = document.getElementById('otpResponse');
+    const registerLoading = document.getElementById('registerLoading');
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+    let storedEmail = '';
+
+    // Handle Registration Form Submission
+    registerForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const walletAddress = document.getElementById('walletAddress').value;
+
+
+      registerLoading.classList.remove('hidden');
+      registerResponse.textContent = '';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/Register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, walletAddress }),
+          credentials: 'include',
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          registerResponse.textContent = result.message;
+          registerResponse.style.color = 'green';
+          registrationFormContainer.classList.add('hidden');
+          otpFormContainer.classList.remove('hidden');
+        } else {
+          registerResponse.textContent = result.message || 'Registration failed';
+          registerResponse.style.color = 'red';
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+        registerResponse.textContent = 'An error occurred during registration';
+        registerResponse.style.color = 'red';
+      } finally {
+        registerLoading.classList.add('hidden');
+      }
+    });
+
+    // Handle OTP Form Submission
+    otpForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const otp = document.getElementById('otp').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/api/VerifyReg-Otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ otp }),
+          credentials: 'include',
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          otpResponse.textContent = result.message;
+          otpResponse.style.color = 'green';
+          window.location.href = result.redirect;
+        } else {
+          otpResponse.textContent = result.message || 'Invalid OTP';
+          otpResponse.style.color = 'red';
+        }
+      } catch (error) {
+        console.error('Error verifying OTP:', error);
+        otpResponse.textContent = 'An error occurred while verifying OTP';
+        otpResponse.style.color = 'red';
+      }
+    });
+
+    // Resend OTP Logic
+    resendOtpBtn.addEventListener('click', async () => {
+      resendOtpBtn.disabled = true;
+      let countdown = 30;
+      resendOtpBtn.textContent = `Resend OTP (${countdown}s)`;
+
+      const timer = setInterval(() => {
+        countdown--;
+        resendOtpBtn.textContent = `Resend OTP (${countdown}s)`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          resendOtpBtn.disabled = false;
+          resendOtpBtn.textContent = 'Resend OTP';
+        }
+      }, 1000);
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/ResendReg-Otp`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        const result = await response.json();
+
+        otpResponse.textContent = result.message;
+        otpResponse.style.color = response.ok ? 'green' : 'red';
+      } catch (error) {
+        console.error('Error resending OTP:', error);
+        otpResponse.textContent = 'An error occurred while resending OTP';
+        otpResponse.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
