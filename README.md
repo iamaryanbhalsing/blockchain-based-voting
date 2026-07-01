@@ -34,7 +34,7 @@ A secure, transparent, and decentralized voting platform built with **Ethereum (
 blockchain-based-voting/
 ├── README.md
 ├── backend/
-│   ├── .env
+│   ├── .env (Add Your Credinetials)
 │   ├── .gitignore
 │   ├── app.js
 │   ├── authenticate/
