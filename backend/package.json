@@ -20,7 +20,7 @@
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
-    "mongoose": "^8.13.2",
+    "mongoose": "^8.22.1",
     "nodemailer": "^6.10.1",
     "web3": "^1.10.0"
   },
