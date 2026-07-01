@@ -34,7 +34,7 @@ A secure, transparent, and decentralized voting platform built with **Ethereum (
 blockchain-based-voting/
 ├── README.md
 ├── backend/
-│   ├── .env (Add Your Credinetials)
+│   ├── .env (Add Your Credinetials) [Create this by YOur Own]
 │   ├── .gitignore
 │   ├── app.js
 │   ├── authenticate/
@@ -79,7 +79,7 @@ blockchain-based-voting/
 │   ├── vote.html
 │   └── vote.css
 └── smart-contract/          # (Assumed - not in zip but referenced)
-    ├── contracts/
+    ├── contracts/           # Soon this will be updated
     └── scripts/
 ```
 ---
